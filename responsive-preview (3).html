@@ -1,0 +1,491 @@
+<!doctype html><html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Responsive Preview</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:system-ui,sans-serif;background:#2b2b2e;color:#eee;height:100vh;display:flex;flex-direction:column;overflow:hidden}
+  .bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:10px 14px;background:#1c1c1f;border-bottom:1px solid #444}
+  .bar button{background:#3a3a40;color:#eee;border:1px solid #555;border-radius:6px;padding:6px 14px;cursor:pointer;font-size:13px}
+  .bar button.on{background:#c8a24e;color:#1c1c1f;border-color:#c8a24e;font-weight:600}
+  .bar label{font-size:12px;opacity:.8;display:flex;align-items:center;gap:8px}
+  .bar input[type=range]{width:200px}
+  #w{font-variant-numeric:tabular-nums;min-width:64px}
+  .stage{flex:1;overflow:auto;display:flex;justify-content:center;align-items:flex-start;gap:24px;padding:18px}
+  .dev{background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 10px 40px #0008;flex:none;position:relative}
+  .dev iframe{border:0;display:block;width:100%;height:100%;background:#fff}
+  .cap{position:absolute;top:-0px;left:0}
+  .col{display:flex;flex-direction:column;align-items:center;gap:8px}
+  .col span{font-size:12px;opacity:.7}
+</style></head><body>
+<div class="bar">
+  <button data-w="1280" class="on">Desktop 1280</button>
+  <button data-w="768">Tablet 768</button>
+  <button data-w="390">Mobile 390</button>
+  <button data-w="360">Small 360</button>
+  <button data-w="all">Teeno saath</button>
+  <label>Width <input id="r" type="range" min="320" max="1440" value="1280"><span id="w">1280px</span></label>
+</div>
+<div class="stage" id="stage"></div>
+<script type="text/plain" id="src"><!doctype html><html lang="ur" dir="rtl"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>Layout Preview</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;500;600;700&family=Noto+Naskh+Arabic:wght@400;600;700&display=swap" rel="stylesheet">
+<style>:root {
+  /* Figma screenshot se liye gaye asli rang */
+  --bg: #fef4e3;
+  --bg-2: #f4ecdc;
+  --brown: #84503d;
+  --brown-d: #77604c;
+  --ink: #4a3426;
+  --muted: #7a6554;
+  --line: #b98a7c;
+  --gold: #c8a24e;
+  --gold-2: #e3c277;
+  --green: #14261e;
+  --green-2: #17392b;
+  --green-3: #1d4636;
+  --cream: #f6eddb;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+body {
+  font-family: "Noto Nastaliq Urdu", "Noto Naskh Arabic", serif;
+  background: var(--bg);
+  color: var(--ink);
+  line-height: 2.1;
+  direction: rtl;
+  overflow-x: hidden;
+}
+a { color: inherit; text-decoration: none; }
+ul { list-style: none; }
+img { max-width: 100%; display: block; }
+input, textarea, button { font-family: inherit; }
+
+.container { width: min(1100px, 100% - 40px); margin-inline: auto; }
+.sec { padding: clamp(36px, 6vw, 72px) 0; position: relative; }
+/* tasveer ka slot: asli file ho to next/image, warna neutral slot */
+.media { position: relative; overflow: hidden; background-color: #e8dcc4; }
+.media.is-empty { background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNmY2MjUyIiBzdHJva2Utd2lkdGg9IjIuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cmVjdCB4PSI4IiB5PSIxMiIgd2lkdGg9IjQ4IiBoZWlnaHQ9IjQwIiByeD0iNCIvPjxjaXJjbGUgY3g9IjIyIiBjeT0iMjYiIHI9IjQiLz48cGF0aCBkPSJNOCA0NGwxNC0xMiAxMCA4IDgtNiAxNiAxNCIvPjwvc3ZnPgo="); background-repeat: no-repeat; background-position: center; background-size: clamp(28px, 22%, 56px); }
+.media-dark { background-color: #1b3a2d; }
+.media-dark.is-empty { background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjYTg4ZjZhIiBzdHJva2Utd2lkdGg9IjIuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cmVjdCB4PSI4IiB5PSIxMiIgd2lkdGg9IjQ4IiBoZWlnaHQ9IjQwIiByeD0iNCIvPjxjaXJjbGUgY3g9IjIyIiBjeT0iMjYiIHI9IjQiLz48cGF0aCBkPSJNOCA0NGwxNC0xMiAxMCA4IDgtNiAxNiAxNCIvPjwvc3ZnPgo="); }
+
+/* =========================================================
+   FIGMA PAGE
+   ========================================================= */
+
+/* ---------- top bar ---------- */
+.topbar { position: sticky; top: 0; z-index: 50; background: var(--bg); border-bottom: 1px solid #e9d9bb; }
+.topbar-in { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 56px; }
+.logo {
+  flex: none; width: 64px; height: 34px; border: 1px solid var(--gold); border-radius: 50%;
+  display: grid; place-items: center; color: var(--brown); font-size: 13px; line-height: 1;
+  outline: 1px solid #c8a24e66; outline-offset: 3px;
+}
+.topbar nav ul { display: flex; gap: clamp(12px, 2vw, 26px); font-size: 13px; color: var(--brown-d); }
+.topbar nav a:hover { color: var(--brown); }
+.burger { display: none; background: none; border: 0; color: var(--brown); font-size: 26px; cursor: pointer; line-height: 1; }
+@media (max-width: 820px) {
+  .burger { display: block; }
+  .topbar-in { position: relative; }
+  .topbar nav { position: absolute; top: 100%; inset-inline: -20px; background: var(--bg); border-bottom: 1px solid #e9d9bb; }
+  .topbar nav ul { display: none; flex-direction: column; gap: 0; padding: 6px 20px 14px; font-size: 15px; }
+  .topbar nav ul.open { display: flex; }
+  .topbar nav li { border-bottom: 1px solid #e9d9bb; }
+  .topbar nav a { display: block; padding: 4px 0; }
+}
+
+/* ---------- hero ---------- */
+.hero-fig { position: relative; width: 100%; aspect-ratio: 16 / 8.6; min-height: 220px; max-height: 760px; background: #0a1222; overflow: hidden; }
+.hero-fig .media { position: absolute; inset: 0; }
+.hero-fig .media.is-empty {
+  background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjYTg4ZjZhIiBzdHJva2Utd2lkdGg9IjIuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cmVjdCB4PSI4IiB5PSIxMiIgd2lkdGg9IjQ4IiBoZWlnaHQ9IjQwIiByeD0iNCIvPjxjaXJjbGUgY3g9IjIyIiBjeT0iMjYiIHI9IjQiLz48cGF0aCBkPSJNOCA0NGwxNC0xMiAxMCA4IDgtNiAxNiAxNCIvPjwvc3ZnPgo="), linear-gradient(180deg, #0a1222 0%, #1b2a3f 60%, #4a3517 100%);
+  background-position: center, center; background-size: 64px, cover;
+}
+.hero-fig::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(180deg, #0006, transparent 25%, transparent 70%, #0004); }
+
+/* ---------- small titles ---------- */
+.mini-title { font-size: clamp(15px, 2vw, 18px); font-weight: 600; color: var(--brown); position: relative; }
+.mini-title.center { text-align: center; margin-bottom: clamp(18px, 3vw, 30px); }
+.fig-title {
+  display: flex; align-items: center; justify-content: center; gap: 12px; text-align: center;
+  font-size: clamp(16px, 2.2vw, 20px); font-weight: 600; color: var(--brown);
+  margin-bottom: clamp(22px, 4vw, 40px);
+}
+.fig-title::before, .fig-title::after {
+  content: ""; width: clamp(28px, 6vw, 56px); height: 1px; background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+
+/* ---------- buttons ---------- */
+.btn-pill {
+  display: inline-block; background: var(--brown-d); color: #fff; border: 0; cursor: pointer;
+  padding: 0 26px; border-radius: 999px; font-size: 13px; line-height: 2.1; transition: .2s;
+}
+.btn-pill:hover { background: var(--brown); }
+.btn-block {
+  width: 100%; background: var(--brown); color: #fff; border: 0; border-radius: 6px; cursor: pointer;
+  padding: 6px 12px; font-size: 14px; transition: .2s;
+}
+.btn-block:hover { background: #6f3b2b; }
+
+/* ---------- intro ---------- */
+.intro-fig { display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: clamp(20px, 6vw, 80px); max-width: 880px; }
+.intro-text .mini-title { margin-bottom: 4px; }
+.intro-text p { font-size: 13px; color: var(--muted); line-height: 2.2; margin-bottom: 14px; }
+.dome-art { aspect-ratio: 420 / 360; width: min(380px, 100%); margin-inline: auto; }
+.dome-art.is-empty { border-radius: 18px; }
+.dome-art.has-img { background: transparent; overflow: visible; }
+@media (max-width: 700px) {
+  .intro-fig { grid-template-columns: 1fr; text-align: center; }
+  .dome-art { order: -1; width: min(300px, 80%); }
+}
+
+/* ---------- divider ---------- */
+.divider {
+  width: min(430px, 70%); height: 1px; margin: 0 auto; position: relative;
+  background: linear-gradient(90deg, transparent, var(--line), transparent);
+}
+.divider::after {
+  content: ""; position: absolute; left: 50%; top: 50%; width: 7px; height: 7px; background: var(--brown);
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+/* ---------- two-column list with centre line ---------- */
+.lattice::before, .lattice::after {
+  content: ""; position: absolute; top: 0; bottom: 0; width: clamp(34px, 8vw, 110px); pointer-events: none;
+  background: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI3MCIgaGVpZ2h0PSI3MCIgdmlld0JveD0iMCAwIDcwIDcwIj4KICA8ZyBmaWxsPSJub25lIiBzdHJva2U9IiNkOWIwYTYiIHN0cm9rZS13aWR0aD0iMS40IiBvcGFjaXR5PSIuNzUiPgogICAgPHBhdGggZD0iTTM1IDQgTDY2IDM1IEwzNSA2NiBMNCAzNSBaIi8+CiAgICA8cGF0aCBkPSJNMzUgMTggTDUyIDM1IEwzNSA1MiBMMTggMzUgWiIgc3Ryb2tlPSIjYjljMzljIi8+CiAgPC9nPgogIDxjaXJjbGUgY3g9IjM1IiBjeT0iMzUiIHI9IjMiIGZpbGw9IiNlOWE5YTAiIG9wYWNpdHk9Ii44Ii8+CiAgPGNpcmNsZSBjeD0iMCIgY3k9IjAiIHI9IjMiIGZpbGw9IiNlOWE5YTAiIG9wYWNpdHk9Ii42Ii8+PGNpcmNsZSBjeD0iNzAiIGN5PSIwIiByPSIzIiBmaWxsPSIjZTlhOWEwIiBvcGFjaXR5PSIuNiIvPgogIDxjaXJjbGUgY3g9IjAiIGN5PSI3MCIgcj0iMyIgZmlsbD0iI2U5YTlhMCIgb3BhY2l0eT0iLjYiLz48Y2lyY2xlIGN4PSI3MCIgY3k9IjcwIiByPSIzIiBmaWxsPSIjZTlhOWEwIiBvcGFjaXR5PSIuNiIvPgo8L3N2Zz4K") repeat-y center top / 70px;
+  -webkit-mask-image: linear-gradient(transparent, #000 12%, #000 88%, transparent);
+          mask-image: linear-gradient(transparent, #000 12%, #000 88%, transparent);
+}
+.lattice .container { width: min(1100px, 100% - 2 * clamp(34px, 8vw, 110px)); }
+.lattice::before { right: 0; }
+.lattice::after { left: 0; }
+
+.split-list { position: relative; width: min(520px, 100%); margin-inline: auto; }
+.split-list::before {
+  content: ""; position: absolute; inset-block: 6px; left: 50%; width: 2px; transform: translateX(-50%); background: var(--brown);
+}
+.split-list li { position: relative; display: grid; grid-template-columns: 1fr 1fr; }
+.split-list li::after {
+  content: ""; position: absolute; left: 50%; top: 50%; width: 7px; height: 7px; background: var(--brown); border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+.cell { display: block; font-size: 13px; line-height: 2.5; color: var(--brown-d); padding-block: 2px; }
+.cell:hover { color: var(--brown); }
+.cell-r { padding-left: 26px; }   /* dahni column: line se faasla bayen taraf */
+.cell-l { padding-right: 26px; }  /* bayen column: line se faasla dahni taraf */
+@media (max-width: 420px) { .cell { font-size: 12px; } .cell-r { padding-left: 18px; } .cell-l { padding-right: 18px; } }
+
+/* ---------- people ---------- */
+.people-fig { display: flex; justify-content: center; gap: clamp(24px, 9vw, 130px); }
+.person-fig { text-align: center; width: min(240px, 44%); }
+.cusp-wrap { width: 100%; aspect-ratio: 1; margin-bottom: 8px; filter: drop-shadow(0 6px 14px #5f423244); }
+.cusp { width: 100%; height: 100%; clip-path: url(#shape-cusp); }
+.person-fig h3 { font-size: clamp(13px, 1.8vw, 16px); font-weight: 600; color: var(--brown); }
+.person-fig small { display: block; font-size: 12px; color: var(--muted); line-height: 1.9; }
+.person-fig p { font-size: 11px; color: var(--muted); line-height: 1.9; }
+
+/* ---------- gallery ---------- */
+.gal-fig {
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2.1fr) minmax(0, 1fr);
+  gap: clamp(10px, 3vw, 40px); width: min(680px, 100%); margin-inline: auto; align-items: center;
+}
+.gal-col { display: grid; gap: clamp(8px, 2vw, 22px); }
+.star { aspect-ratio: 1; width: 100%; clip-path: url(#shape-star); }
+.mihrab { aspect-ratio: 0.86; width: 100%; clip-path: url(#shape-mihrab); }
+
+/* ---------- books ---------- */
+.books-fig { display: flex; justify-content: center; gap: clamp(14px, 6vw, 90px); }
+.book-fig { text-align: center; width: min(170px, 28%); }
+.book3d {
+  position: relative; aspect-ratio: 3 / 4.1; width: 100%; margin-bottom: 14px; border-radius: 3px 8px 8px 3px;
+  display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 14% 8% 8%;
+  transform: perspective(700px) rotateY(-18deg) rotateZ(-2deg); transform-origin: 60% 60%;
+  box-shadow: -10px 14px 22px #3a1d1244, inset 3px 0 0 #ffffff55; overflow: hidden;
+}
+.book3d.dark { background: linear-gradient(135deg, #202020, #050505); color: var(--gold-2); transform: perspective(700px) rotateY(18deg) rotateZ(2deg); }
+.book3d.light { background: linear-gradient(135deg, #fff, #e8e8e8); color: #1b1b1b; }
+.book3d.split { background: linear-gradient(#1c1c1c 0 52%, #f2f2f2 52% 100%); color: var(--gold-2); }
+.book-title { font-size: clamp(14px, 3vw, 28px); line-height: 1.5; font-weight: 700; }
+.book-badge { margin-top: auto; font-size: clamp(7px, 1vw, 10px); line-height: 1.6; opacity: .75; color: inherit; }
+.book3d.split .book-badge { color: #555; }
+.book-fig h3 { font-size: clamp(12px, 1.8vw, 15px); font-weight: 600; color: var(--brown); line-height: 1.9; }
+.book-fig small { font-size: 11px; color: var(--muted); }
+
+/* ---------- contact ---------- */
+.contact-fig { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.6fr); gap: 16px; width: min(720px, 100%); margin-inline: auto; align-items: start; }
+.card-sm, .card-lg { background: #fff; border-radius: 6px; padding: 12px; box-shadow: 0 2px 14px #8a4b3814; }
+.card-sm { display: grid; gap: 10px; background: transparent; box-shadow: none; padding: 0; }
+.icon-field {
+  display: flex; align-items: center; gap: 10px; background: #fff; border-radius: 4px; padding: 4px 12px; color: var(--brown);
+  box-shadow: 0 2px 10px #8a4b3814;
+}
+.icon-field input { border: 0; outline: 0; background: transparent; flex: 1; min-width: 0; font-size: 13px; color: var(--ink); }
+.icon-field:focus-within { outline: 2px solid var(--gold); }
+.card-lg { display: grid; gap: 10px; padding: 16px; }
+.card-lg label { display: grid; font-size: 11px; color: var(--muted); line-height: 1.9; }
+.card-lg input, .card-lg textarea {
+  border: 0; background: #f3f0e9; border-radius: 3px; padding: 4px 10px; font-size: 13px; width: 100%; outline: 0; color: var(--ink);
+}
+.card-lg textarea { resize: vertical; min-height: 110px; }
+.card-lg input:focus, .card-lg textarea:focus { outline: 2px solid var(--gold); }
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.card-lg .btn-pill { justify-self: end; background: var(--brown); padding-inline: 22px; }
+.ok { font-size: 12px; color: var(--brown); }
+@media (max-width: 640px) { .contact-fig { grid-template-columns: 1fr; } }
+
+/* ---------- footer ---------- */
+.footer-fig { padding: 40px 0 16px; background: var(--bg); }
+.foot-top { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-bottom: 18px; border-bottom: 1px solid #e9d9bb; }
+.foot-search { flex: 0 1 300px; }
+.foot-search input { width: 100%; border: 0; outline: 0; background: #efe6d2; border-radius: 4px; padding: 3px 14px; font-size: 13px; color: var(--ink); }
+.foot-search input:focus { outline: 2px solid var(--gold); }
+.foot-cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; padding: 20px 0; width: min(760px, 100%); margin-inline: auto; }
+.foot-cols h4 { font-size: 13px; color: var(--brown); font-weight: 600; margin-bottom: 2px; }
+.foot-cols li { font-size: 12px; color: var(--muted); line-height: 2.2; }
+.foot-cols a:hover { color: var(--brown); }
+.foot-bottom { display: flex; justify-content: space-between; gap: 12px; font-size: 11px; color: var(--muted); border-top: 1px solid #e9d9bb; padding-top: 10px; }
+@media (max-width: 520px) { .foot-cols { grid-template-columns: 1fr 1fr; } .foot-top { flex-direction: column; align-items: stretch; } .foot-top .logo { align-self: flex-start; } }
+
+/* =========================================================
+   ADDED SECTIONS: banner, افکار و خیالات, اقوالِ زریں, مضامین, تقریبات
+   ========================================================= */
+.section { padding: clamp(44px, 7vw, 80px) 0; position: relative; }
+.light { background: var(--bg-2) url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4MCIgaGVpZ2h0PSI4MCIgdmlld0JveD0iMCAwIDgwIDgwIiBmaWxsPSJub25lIiBzdHJva2U9IiNiOTk3NmEiIHN0cm9rZS1vcGFjaXR5PSIuMTAiIHN0cm9rZS13aWR0aD0iMSI+CiAgPHJlY3QgeD0iMjAiIHk9IjIwIiB3aWR0aD0iNDAiIGhlaWdodD0iNDAiLz4KICA8cmVjdCB4PSIyMCIgeT0iMjAiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgdHJhbnNmb3JtPSJyb3RhdGUoNDUgNDAgNDApIi8+CiAgPGNpcmNsZSBjeD0iNDAiIGN5PSI0MCIgcj0iOSIvPgogIDxwYXRoIGQ9Ik0wIDBMMjAgMjBNODAgMEw2MCAyME0wIDgwTDIwIDYwTTgwIDgwTDYwIDYwIi8+Cjwvc3ZnPgo=") center / 80px; }
+.dark  { background: var(--green) url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4MCIgaGVpZ2h0PSI4MCIgdmlld0JveD0iMCAwIDgwIDgwIiBmaWxsPSJub25lIiBzdHJva2U9IiNjOGEyNGUiIHN0cm9rZS1vcGFjaXR5PSIuMTMiIHN0cm9rZS13aWR0aD0iMSI+CiAgPHJlY3QgeD0iMjAiIHk9IjIwIiB3aWR0aD0iNDAiIGhlaWdodD0iNDAiLz4KICA8cmVjdCB4PSIyMCIgeT0iMjAiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgdHJhbnNmb3JtPSJyb3RhdGUoNDUgNDAgNDApIi8+CiAgPGNpcmNsZSBjeD0iNDAiIGN5PSI0MCIgcj0iOSIvPgogIDxwYXRoIGQ9Ik0wIDBMMjAgMjBNODAgMEw2MCAyME0wIDgwTDIwIDYwTTgwIDgwTDYwIDYwIi8+Cjwvc3ZnPgo=") center / 80px; color: var(--cream); }
+
+.sec-title { text-align: center; margin-bottom: clamp(26px, 4vw, 44px); }
+.sec-title::before { content: ""; display: block; width: 8px; height: 8px; margin: 0 auto 6px; border-radius: 50%; background: var(--gold); }
+.sec-title h2 { font-size: clamp(22px, 3vw, 30px); font-weight: 600; line-height: 1.9; }
+.sec-title::after { content: ""; display: block; width: 72px; height: 2px; margin: 2px auto 0; background: var(--gold); opacity: .75; }
+.light .sec-title h2 { color: #1f1a14; }
+.dark .sec-title h2 { color: #f3ead6; }
+
+/* buttons / links for these sections */
+.btn-gold {
+  display: inline-flex; align-items: center; gap: 8px; background: var(--gold); color: #1a2a20;
+  padding: 2px 22px; border-radius: 999px; font-size: 13px; line-height: 2.2;
+}
+.btn-gold:hover { background: var(--gold-2); transform: translateY(-1px); }
+.btn-ghost {
+  display: inline-flex; align-items: center; gap: 8px; border: 1px solid #c8a24e88; color: var(--gold-2);
+  padding: 0 20px; border-radius: 999px; font-size: 12px; line-height: 2.3;
+}
+.btn-ghost:hover { background: var(--gold); color: #1a2a20; }
+.more-link-dark {
+  display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--brown);
+  border-bottom: 1px solid var(--gold); padding-bottom: 1px; line-height: 2; transition: gap .2s, color .2s;
+}
+.more-link-dark:hover { gap: 10px; color: #5f3322; }
+
+/* ---------- year banner ---------- */
+.year-sec { padding: clamp(36px, 6vw, 64px) 0; }
+.badge {
+  position: absolute; top: 14px; left: clamp(12px, 2vw, 22px); background: var(--gold); color: #1a2a20;
+  font-size: 10px; line-height: 1.9; padding: 0 12px; border-radius: 999px;
+}
+.year { display: grid; grid-template-columns: minmax(200px, .6fr) minmax(0, 1.5fr); align-items: center; gap: clamp(20px, 4vw, 48px); }
+.year-num {
+  align-self: stretch; display: grid; place-content: center; text-align: center; color: var(--gold);
+  font-size: clamp(56px, 9vw, 104px); line-height: 1.4; padding-inline-end: clamp(16px, 4vw, 48px);
+  border-inline-end: 1px solid #c8a24e40;
+}
+.year-num span { position: relative; display: inline-block; padding-top: 10px; }
+.year-num span::before { content: ""; position: absolute; top: 0; left: 50%; width: 5px; height: 5px; border-radius: 50%; background: var(--gold); }
+.year-num span::after { content: ""; display: block; width: 80px; height: 3px; background: #8a7a3d; margin: 6px auto 0; }
+.year-text h2 { font-size: clamp(22px, 3vw, 30px); font-weight: 600; color: #f5ecd8; }
+.year-text p { font-size: 13px; color: #cfc6b0; margin: 6px 0 18px; max-width: 46ch; }
+@media (max-width: 760px) {
+  .year { grid-template-columns: 1fr; text-align: center; }
+  .year-num { border-inline-end: 0; border-bottom: 1px solid #c8a24e40; padding: 8px 0 18px; }
+  .year-text p { margin-inline: auto; }
+  .badge { position: static; display: block; width: max-content; margin: 0 auto 14px; }
+}
+
+/* ---------- thoughts ---------- */
+.thoughts { display: grid; grid-template-columns: 1fr 1fr; width: min(980px, 100%); margin-inline: auto; }
+.thought { display: flex; flex-direction: column; padding: 4px clamp(18px, 4vw, 48px); }
+.thought:first-child { border-inline-end: 1px solid #b9976a55; }
+.thought .tag { font-size: 11px; color: var(--brown); }
+.thought h3 { font-size: clamp(18px, 2.2vw, 22px); font-weight: 700; color: #1f1a14; margin-bottom: 6px; }
+.thought p { font-size: 13px; color: var(--muted); line-height: 2.3; margin-bottom: 12px; }
+.thought .more-link-dark { align-self: flex-end; }
+@media (max-width: 760px) {
+  .thoughts { grid-template-columns: 1fr; }
+  .thought:first-child { border-inline-end: 0; border-bottom: 1px solid #b9976a55; padding-bottom: 22px; margin-bottom: 22px; }
+}
+
+/* ---------- quotes ---------- */
+.quotes { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(12px, 2.5vw, 28px); }
+.quote-box { border: 1px solid #c8a24e55; background: #0000002a; padding: clamp(22px, 4vw, 38px) clamp(18px, 3vw, 34px); text-align: center; }
+.q-orn {
+  display: block; position: relative; height: 8px; margin-bottom: 16px;
+  background: radial-gradient(circle, var(--gold) 0 3.5px, transparent 4px) center / 8px 8px no-repeat;
+}
+.q-orn::before, .q-orn::after { content: ""; position: absolute; top: 50%; width: 34px; height: 1px; background: #c8a24e88; }
+.q-orn::before { right: calc(50% + 12px); }
+.q-orn::after  { left: calc(50% + 12px); }
+.quote-box p { font-size: 14px; line-height: 2.4; color: #efe6d2; margin-bottom: 10px; }
+.q-by { display: block; font-style: normal; font-size: 12px; color: var(--gold-2); margin-bottom: 14px; }
+@media (max-width: 760px) { .quotes { grid-template-columns: 1fr; } }
+
+/* ---------- articles ---------- */
+.articles { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(14px, 3vw, 32px); }
+.art-card { display: flex; flex-direction: column; background: #faf6ec; border: 1px solid #e6dcc6; box-shadow: 0 6px 20px #3a2a1214; padding: 12px 12px 14px; }
+.art-frame { clip-path: url(#shape-ogee); background: var(--gold); padding: 2px 2px 0; }
+.art-head {
+  clip-path: url(#shape-ogee); background: var(--green) url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4MCIgaGVpZ2h0PSI4MCIgdmlld0JveD0iMCAwIDgwIDgwIiBmaWxsPSJub25lIiBzdHJva2U9IiNjOGEyNGUiIHN0cm9rZS1vcGFjaXR5PSIuMTMiIHN0cm9rZS13aWR0aD0iMSI+CiAgPHJlY3QgeD0iMjAiIHk9IjIwIiB3aWR0aD0iNDAiIGhlaWdodD0iNDAiLz4KICA8cmVjdCB4PSIyMCIgeT0iMjAiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgdHJhbnNmb3JtPSJyb3RhdGUoNDUgNDAgNDApIi8+CiAgPGNpcmNsZSBjeD0iNDAiIGN5PSI0MCIgcj0iOSIvPgogIDxwYXRoIGQ9Ik0wIDBMMjAgMjBNODAgMEw2MCAyME0wIDgwTDIwIDYwTTgwIDgwTDYwIDYwIi8+Cjwvc3ZnPgo=") center / 60px; color: #f3ead6;
+  height: 120px; display: grid; align-content: end; justify-items: center; padding-bottom: 16px; gap: 2px;
+}
+.art-head .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--gold); }
+.art-head h3 { font-size: 17px; font-weight: 600; line-height: 1.8; }
+.art-card ul { padding: 8px 8px 6px; }
+.art-card li { border-bottom: 1px solid #e6dcc6; }
+.art-card li a { display: flex; align-items: center; gap: 10px; padding: 4px 0; font-size: 13px; color: #3d3226; }
+.art-card li a::before { content: ""; width: 6px; height: 6px; background: var(--gold); transform: rotate(45deg); flex: none; }
+.art-card li a:hover { color: var(--brown); }
+.art-card .more-link-dark { align-self: flex-end; margin: 10px 8px 0; }
+@media (max-width: 900px) { .articles { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 600px) { .articles { grid-template-columns: 1fr; } }
+
+/* ---------- events (تقریبات) ---------- */
+.events { display: grid; grid-template-columns: 1fr 1.15fr; gap: clamp(20px, 4vw, 48px); }
+.ev-head { border-bottom: 1px solid #c8a24e66; padding-bottom: 6px; margin-bottom: 14px; font-size: 14px; color: var(--gold-2); }
+.video-main { aspect-ratio: 16 / 8.5; border-radius: 6px; }
+.video-main .caption, .video-sm .caption {
+  position: absolute; inset: auto 0 0 0; padding: 4px 12px; font-size: 12px; background: linear-gradient(transparent, #000a); color: #fff;
+}
+.play {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  width: 46px; height: 46px; border-radius: 50%; background: var(--gold); display: grid; place-items: center; color: #1a2a20;
+}
+.play svg { width: 18px; height: 18px; margin-left: 2px; }
+.play.sm { width: 30px; height: 30px; }
+.play.sm svg { width: 12px; height: 12px; }
+.video-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
+.video-sm, .photo-card {
+  background: var(--green-2); border: 1px solid #c8a24e44; border-radius: 6px; min-height: 96px; position: relative;
+  display: grid; place-items: center; text-align: center; font-size: 12px; color: var(--gold-2);
+}
+.photo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.photo-card { min-height: clamp(110px, 14vw, 150px); align-content: center; justify-items: center; gap: 6px; }
+.photo-card:hover { background: var(--green-3); border-color: var(--gold); }
+.more-link { display: inline-block; margin-top: 14px; font-size: 13px; color: var(--gold-2); border-bottom: 1px solid var(--gold); }
+@media (max-width: 860px) { .events { grid-template-columns: 1fr; } }
+
+/* =========================================================
+   POLISH: motion, hover, focus
+   ========================================================= */
+::selection { background: #c8a24e55; }
+a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible {
+  outline: 2px solid var(--gold); outline-offset: 3px; border-radius: 4px;
+}
+.reveal { opacity: 0; transform: translateY(22px); transition: opacity .7s ease, transform .7s ease; }
+.reveal.in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .reveal { opacity: 1; transform: none; transition: none; }
+}
+
+.dome-art.has-img { filter: drop-shadow(0 18px 22px #c8a24e44); }
+.btn-pill, .btn-block, .btn-gold, .btn-ghost { transition: background .25s, color .25s, transform .2s, box-shadow .25s; }
+.btn-pill:hover, .btn-block:hover { transform: translateY(-1px); box-shadow: 0 6px 14px #84503d33; }
+.cell { transition: color .2s, transform .2s; }
+.cell:hover { transform: translateX(-4px); }
+.cusp-wrap { transition: transform .4s ease, filter .4s ease; }
+.person-fig:hover .cusp-wrap { transform: translateY(-5px); filter: drop-shadow(0 12px 18px #5f423255); }
+.star, .mihrab { transition: transform .4s ease; }
+.star:hover { transform: scale(1.06) rotate(5deg); }
+.mihrab:hover { transform: scale(1.02); }
+
+/* books */
+.book3d { transition: transform .45s ease, box-shadow .45s ease; }
+.book3d::before { content: ""; position: absolute; inset: 0 auto 0 0; width: 7%; background: linear-gradient(90deg, #0006, #ffffff2e 60%, transparent); z-index: 1; }
+.book3d:not(.has-cover)::after { content: ""; position: absolute; inset: 6% 6% 6% 10%; border: 1px solid currentColor; opacity: .28; pointer-events: none; }
+.book-fig:hover .book3d, .book-fig:hover .book3d.dark { transform: perspective(700px) rotateY(0deg) rotateZ(0deg) translateY(-8px); box-shadow: 0 22px 28px #3a1d1233; }
+.book3d.split { box-shadow: -10px 14px 22px #3a1d1244, inset 3px 0 0 #ffffff55; }
+
+/* forms */
+.card-lg, .icon-field { transition: box-shadow .25s; }
+.card-lg:focus-within, .icon-field:focus-within { box-shadow: 0 6px 22px #84503d26; }
+.art-card, .photo-card, .video-sm { transition: transform .3s, box-shadow .3s, background .25s, border-color .25s; }
+.art-card:hover { transform: translateY(-4px); box-shadow: 0 14px 30px #3a2a1224; }
+.photo-card:hover, .video-sm:hover { transform: translateY(-3px); }
+.book3d.has-cover { padding: 0; background: #fff; }
+</style></head><body><svg width="0" height="0" style="position:absolute"><defs>
+<clipPath id="shape-star" clipPathUnits="objectBoundingBox"><polygon points="0.5000,0.0000 0.6301,0.1859 0.8536,0.1464 0.8141,0.3699 1.0000,0.5000 0.8141,0.6301 0.8536,0.8536 0.6301,0.8141 0.5000,1.0000 0.3699,0.8141 0.1464,0.8536 0.1859,0.6301 0.0000,0.5000 0.1859,0.3699 0.1464,0.1464 0.3699,0.1859"/></clipPath>
+<clipPath id="shape-mihrab" clipPathUnits="objectBoundingBox"><path d="M0,1 L0,0.5 C0,0.40 0.06,0.36 0.14,0.34 C0.17,0.33 0.17,0.30 0.17,0.27 C0.17,0.16 0.40,0.10 0.5,0 C0.60,0.10 0.83,0.16 0.83,0.27 C0.83,0.30 0.83,0.33 0.86,0.34 C0.94,0.36 1,0.40 1,0.5 L1,1 Z"/></clipPath><clipPath id="shape-cusp" clipPathUnits="objectBoundingBox"><path d="M0.5,0 C0.55,0.10 0.62,0.17 0.72,0.22 C0.85,0.27 1,0.30 1,0.45 C1,0.58 0.9,0.62 0.85,0.68 C0.80,0.74 0.70,0.82 0.5,1 C0.30,0.82 0.20,0.74 0.15,0.68 C0.10,0.62 0,0.58 0,0.45 C0,0.30 0.15,0.27 0.28,0.22 C0.38,0.17 0.45,0.10 0.5,0 Z"/></clipPath><clipPath id="shape-ogee" clipPathUnits="objectBoundingBox"><path d="M0,1 L0,0.52 C0,0.40 0.12,0.36 0.22,0.30 C0.34,0.24 0.40,0.16 0.46,0.07 C0.48,0.03 0.49,0.01 0.5,0 C0.51,0.01 0.52,0.03 0.54,0.07 C0.60,0.16 0.66,0.24 0.78,0.30 C0.88,0.36 1,0.40 1,0.52 L1,1 Z"/></clipPath>
+</defs></svg>
+<header class="topbar"><div class="container topbar-in"><a href="#top" class="logo">لوگو</a>
+<nav><ul><li><a href="#top">صفحۂ اول</a></li><li><a href="#intro">تعارف</a></li><li><a href="#sections">گوشے</a></li><li><a href="#people">شخصیات</a></li><li><a href="#gallery">گیلری</a></li><li><a href="#books">کتب</a></li><li><a href="#contact">رابطہ</a></li></ul></nav><button class="burger">☰</button></div></header>
+<main>
+<section id="top" class="hero-fig"><div class="media media-dark is-empty " role="img" aria-label="مسجد کا منظر"></div></section>
+<section id="intro" class="sec"><div class="container intro-fig"><div class="intro-text"><h2 class="mini-title">تعارف</h2><p>یہاں ادارے یا شخصیت کا مختصر تعارف درج ہوگا۔ یہ متن نمونے کے طور پر رکھا گیا ہے، اسے اپنے اصل مواد سے تبدیل کریں۔ تعارف تین چار سطروں پر مشتمل ہو سکتا ہے تاکہ صفحے کی ساخت فگما کے مطابق رہے۔</p><a class="btn-pill">مزید</a></div><div class="media media-light is-empty dome-art" role="img" aria-label="گنبد"></div></div></section>
+<div class="divider"></div>
+<section id="sections" class="sec lattice"><div class="container"><h2 class="mini-title center">گوشے</h2><ul class="split-list"><li><a class="cell cell-r">حالاتِ زندگی</a><a class="cell cell-l">مقامِ ولادت</a></li><li><a class="cell cell-r">ابتدائی تعلیم</a><a class="cell cell-l">اساتذہ کرام</a></li><li><a class="cell cell-r">علمی خدمات</a><a class="cell cell-l">تدریسی خدمات</a></li><li><a class="cell cell-r">تصنیفات</a><a class="cell cell-l">تالیفات</a></li><li><a class="cell cell-r">اسفار</a><a class="cell cell-l">دعوتی دورے</a></li><li><a class="cell cell-r">روحانی سفر</a><a class="cell cell-l">اوراد و وظائف</a></li><li><a class="cell cell-r">تلامذہ</a><a class="cell cell-l">متوسلین</a></li><li><a class="cell cell-r">خلفاء</a><a class="cell cell-l">جانشین</a></li><li><a class="cell cell-r">ملفوظات</a><a class="cell cell-l">اقوالِ زریں</a></li><li><a class="cell cell-r">مکتوبات</a><a class="cell cell-l">خطوط</a></li><li><a class="cell cell-r">یادگاریں</a><a class="cell cell-l">آخری ایام</a></li></ul></div></section>
+<div class="divider"></div>
+<section id="people" class="sec"><div class="container"><h2 class="fig-title">شخصیات</h2><div class="people-fig"><article class="person-fig"><div class="cusp-wrap"><div class="media media-light is-empty cusp" role="img" aria-label="حافظ سائیں محمد اقبال"></div></div><h3>حافظ سائیں محمد اقبال</h3><small>بانی و سرپرست</small><p>مختصر تعارف یہاں درج ہوگا</p></article><article class="person-fig"><div class="cusp-wrap"><div class="media media-light is-empty cusp" role="img" aria-label="پیر سائیں حسن الدین"></div></div><h3>پیر سائیں حسن الدین</h3><small>جانشین و رہنما</small><p>مختصر تعارف یہاں درج ہوگا</p></article></div></div></section>
+<section id="gallery" class="sec"><div class="container"><h2 class="fig-title">گیلری</h2><div class="gal-fig"><div class="gal-col"><div class="media media-light is-empty star" role="img" aria-label="۱"></div><div class="media media-light is-empty star" role="img" aria-label="۲"></div></div><div class="media media-light is-empty mihrab" role="img" aria-label="مرکزی"></div><div class="gal-col"><div class="media media-light is-empty star" role="img" aria-label="۳"></div><div class="media media-light is-empty star" role="img" aria-label="۴"></div></div></div></div></section>
+<section id="books" class="sec"><div class="container"><h2 class="fig-title">کتب</h2><div class="books-fig"><article class="book-fig"><div class="book3d split"><span class="book-title">کتاب اول</span></div><h3>کتاب اول</h3><small>مصنف کا نام</small></article><article class="book-fig"><div class="book3d light"><span class="book-title">کتاب دوم</span></div><h3>کتاب دوم</h3><small>مصنف کا نام</small></article><article class="book-fig"><div class="book3d dark"><span class="book-title">کتاب سوم</span></div><h3>کتاب سوم</h3><small>مصنف کا نام</small></article></div></div></section>
+
+<section class="section dark year-sec"><span class="badge">خصوصی</span><div class="container year"><div class="year-num"><span>۲۰۱۰ء</span></div><div class="year-text"><h2>ایف حافظ سائیں محمد اقبال</h2><p>یہاں بینر کا مختصر تعارف درج ہوگا جو اس سال کی اہمیت اور واقعے کا خلاصہ بیان کرے۔ یہ متن نمونے کے طور پر رکھا گیا ہے۔</p><a class="btn-gold">مزید پڑھیں <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></a></div></div></section>
+<section id="thoughts" class="section light"><div class="container"><div class="sec-title"><h2>افکار و خیالات</h2></div><div class="thoughts"><article class="thought"><small class="tag">مفکر</small><h3>حافظ سائیں محمد اقبال</h3><p>یہاں فکر و خیال کا مختصر اقتباس درج ہوگا۔ یہ متن نمونے کے طور پر رکھا گیا ہے اور اسے اصل مواد سے بدلا جا سکتا ہے۔</p><a class="more-link-dark">مزید پڑھیں <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></a></article><article class="thought"><small class="tag">مفکر</small><h3>پیر سائیں حسن الدین</h3><p>یہاں فکر و خیال کا مختصر اقتباس درج ہوگا۔ یہ متن نمونے کے طور پر رکھا گیا ہے اور اسے اصل مواد سے بدلا جا سکتا ہے۔</p><a class="more-link-dark">مزید پڑھیں <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></a></article></div></div></section>
+<section id="quotes" class="section dark"><div class="container"><div class="sec-title"><h2>اقوالِ زریں</h2></div><div class="quotes"><blockquote class="quote-box"><span class="q-orn"></span><p>یہاں ایک قولِ زریں درج ہوگا جو قاری کے دل پر اثر کرے اور زندگی کے لیے رہنمائی فراہم کرے۔</p><cite class="q-by">پیر سائیں حسن الدین</cite><a class="btn-ghost">مزید پڑھیں <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></a></blockquote><blockquote class="quote-box"><span class="q-orn"></span><p>یہاں دوسرا قولِ زریں درج ہوگا، جسے آپ اپنے اصل اقوال سے تبدیل کر سکتے ہیں۔</p><cite class="q-by">حافظ سائیں محمد اقبال</cite><a class="btn-ghost">مزید پڑھیں <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></a></blockquote></div></div></section>
+<section id="articles" class="section light"><div class="container"><div class="sec-title"><h2>مضامین</h2></div><div class="articles"><article class="art-card"><div class="art-frame"><div class="art-head"><span class="dot"></span><h3>نشرِ قرآن</h3></div></div><ul><li><a>پہلا مضمون</a></li><li><a>دوسرا مضمون</a></li><li><a>تیسرا مضمون</a></li></ul><a class="more-link-dark">مزید <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></a></article><article class="art-card"><div class="art-frame"><div class="art-head"><span class="dot"></span><h3>مراقباتِ فکر</h3></div></div><ul><li><a>پہلا مضمون</a></li><li><a>دوسرا مضمون</a></li><li><a>تیسرا مضمون</a></li></ul><a class="more-link-dark">مزید <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></a></article><article class="art-card"><div class="art-frame"><div class="art-head"><span class="dot"></span><h3>مشترک معلومات</h3></div></div><ul><li><a>پہلا مضمون</a></li><li><a>دوسرا مضمون</a></li><li><a>تیسرا مضمون</a></li></ul><a class="more-link-dark">مزید <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></a></article></div></div></section>
+<section id="events" class="section dark"><div class="container"><div class="sec-title"><h2>تقریبات</h2></div><div class="events">
+<div><div class="ev-head"><span>فوٹو گیلری</span></div><div class="photo-grid"><a class="photo-card"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l1.5-2h7L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.5"/></svg><span>تقریب کی تصاویر 1</span></a><a class="photo-card"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l1.5-2h7L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.5"/></svg><span>تقریب کی تصاویر 2</span></a><a class="photo-card"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l1.5-2h7L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.5"/></svg><span>تقریب کی تصاویر 3</span></a><a class="photo-card"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l1.5-2h7L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.5"/></svg><span>تقریب کی تصاویر 4</span></a></div><a class="more-link">مزید دیکھیں</a></div>
+<div><div class="ev-head"><span>ویڈیو گیلری</span></div><div class="media media-dark is-empty video-main" role="img" aria-label="ویڈیو"><span class="play"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span><span class="caption">سالانہ تقریب – ویڈیو عنوان ۱</span></div><div class="video-row"><a class="video-sm"><span class="play sm"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span><span class="caption">ویڈیو عنوان ۲</span></a><a class="video-sm"><span class="play sm"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span><span class="caption">ویڈیو عنوان ۳</span></a></div><a class="more-link">مزید دیکھیں</a></div>
+</div></div></section>
+
+<section id="contact" class="sec"><div class="container"><h2 class="fig-title">رابطہ</h2><div class="contact-fig">
+<form class="card-sm"><label class="icon-field"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/></svg><input placeholder="نام"></label><label class="icon-field"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16v12H4zM4 7l8 6 8-6"/></svg><input placeholder="ای میل"></label><label class="icon-field"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg><input placeholder="فون"></label><button type="button" class="btn-block">ارسال کریں</button></form>
+<form class="card-lg"><div class="row2"><label>پہلا نام<input></label><label>آخری نام<input></label></div><label>موضوع<input></label><label>پیغام<textarea rows="5"></textarea></label><button type="button" class="btn-pill">بھیجیں</button></form>
+</div></div></section>
+</main>
+<footer class="footer-fig"><div class="container"><div class="foot-top"><a class="logo">لوگو</a><label class="foot-search"><input type="search" placeholder="تلاش کریں"></label></div>
+<div class="foot-cols"><div><h4>فوری روابط</h4><ul><li><a>صفحۂ اول</a></li><li><a>تعارف</a></li><li><a>کتب</a></li><li><a>گیلری</a></li></ul></div><div><h4>مواد</h4><ul><li><a>شخصیات</a></li><li><a>مضامین</a></li><li><a>تقریبات</a></li><li><a>اقوالِ زریں</a></li></ul></div><div><h4>رابطہ</h4><ul><li><a>ای میل</a></li><li><a>فون</a></li><li><a>پتہ</a></li><li><a>سوشل میڈیا</a></li></ul></div></div>
+<div class="foot-bottom"><span>© ۲۰۲۶ جملہ حقوق محفوظ ہیں</span><span>پرائیویسی پالیسی</span></div></div></footer>
+</body></html></script>
+<script>
+const SRC = document.getElementById("src").textContent;
+const stage = document.getElementById("stage");
+const r = document.getElementById("r"), wl = document.getElementById("w");
+const btns = [...document.querySelectorAll(".bar button")];
+
+function frame(w, h, scale, label) {
+  const col = document.createElement("div"); col.className = "col";
+  const box = document.createElement("div"); box.className = "dev";
+  box.style.width = w * scale + "px"; box.style.height = h * scale + "px";
+  const f = document.createElement("iframe");
+  f.style.width = w + "px"; f.style.height = h + "px";
+  f.style.transform = "scale(" + scale + ")"; f.style.transformOrigin = "0 0";
+  f.srcdoc = SRC; box.appendChild(f);
+  if (label) { const s = document.createElement("span"); s.textContent = label; col.appendChild(s); }
+  col.appendChild(box); return col;
+}
+
+function single(w) {
+  stage.innerHTML = "";
+  const availW = stage.clientWidth - 36, availH = stage.clientHeight - 36;
+  const scale = Math.min(1, availW / w);
+  const h = Math.floor(availH / scale);
+  stage.appendChild(frame(w, h, scale));
+  r.value = w; wl.textContent = w + "px";
+}
+function all() {
+  stage.innerHTML = "";
+  const ws = [1280, 768, 390], gap = 24;
+  const availW = stage.clientWidth - 36 - gap * 2, availH = stage.clientHeight - 36 - 24;
+  const scale = Math.min(1, availW / ws.reduce((a, b) => a + b, 0));
+  const h = Math.floor(availH / scale);
+  ws.forEach((w, i) => stage.appendChild(frame(w, h, scale, ["Desktop","Tablet","Mobile"][i] + " " + w)));
+  wl.textContent = "3 views";
+}
+function set(v) {
+  btns.forEach(b => b.classList.toggle("on", b.dataset.w === String(v)));
+  v === "all" ? all() : single(+v);
+}
+btns.forEach(b => b.onclick = () => set(b.dataset.w));
+r.oninput = () => { btns.forEach(b => b.classList.remove("on")); single(+r.value); };
+addEventListener("resize", () => { const on = btns.find(b => b.classList.contains("on")); on ? set(on.dataset.w) : single(+r.value); });
+set(1280);
+</script></body></html>
